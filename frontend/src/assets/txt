@@ -1,0 +1,182 @@
+import {
+  ReactFlow,
+  Controls,
+  MiniMap,
+  useNodesState,
+  useEdgesState,
+  Handle,
+  Position,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import { useState } from "react";
+import axios from "axios";
+
+// ✅ Custom Input Node
+const CustomInputNode = ({ id, data }) => {
+  return (
+    <div
+      style={{
+        border: "2px solid blue",
+        borderRadius: 5,
+        width: 300,
+        height: 120,
+        overflow: "hidden",
+      }}
+    >
+      {/* 👉 Only RIGHT handle */}
+      <Handle type="source" position={Position.Right} />
+
+      <textarea
+        placeholder="Type your prompt..."
+        value={data.input || ""}
+        onChange={(e) => data.onChange(id, e.target.value)} // ✅ FIX
+        style={{
+          width: "100%",
+          height: "100%",
+          resize: "none",
+          boxSizing: "border-box",
+          outline: "none",
+          border: "none",
+          padding: "5px",
+        }}
+      />
+    </div>
+  );
+};
+
+// ✅ Custom Output Node
+const CustomOutputNode = ({ data }) => {
+  return (
+    <div
+      style={{
+        border: "2px solid green",
+        borderRadius: 5,
+        width: 300,
+        height: 120,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 10,
+        textAlign: "center",
+      }}
+    >
+      {/* 👉 Only LEFT handle */}
+      <Handle type="target" position={Position.Left} />
+
+      {data.result}
+    </div>
+  );
+};
+
+function App() {
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState("Result will appear here");
+
+  // ✅ Handle input change (IMPORTANT)
+  const handleInputChange = (id, value) => {
+    setInput(value);
+
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === id
+          ? { ...node, data: { ...node.data, input: value } }
+          : node,
+      ),
+    );
+  };
+
+  // ✅ Register node types
+  const nodeTypes = {
+    inputNode: CustomInputNode,
+    outputNode: CustomOutputNode,
+  };
+
+  // ✅ Initial Nodes
+  const initialNodes = [
+    {
+      id: "1",
+      type: "inputNode",
+      position: { x: 100, y: 100 },
+      data: { input, onChange: handleInputChange },
+    },
+    {
+      id: "2",
+      type: "outputNode",
+      position: { x: 800, y: 100 },
+      data: { result },
+    },
+  ];
+
+  // ✅ Edge
+  const initialEdges = [
+    {
+      id: "e1-2",
+      source: "1",
+      target: "2",
+      type: "smoothstep",
+      style: { stroke: "red", strokeWidth: 2 },
+      animated: true,
+    },
+  ];
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  // ✅ Run Flow API
+  const runFlow = async () => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/prompt", {
+        prompt: input,
+        model: "meta-llama/llama-3-8b-instruct",
+      });
+
+      setResult(res.data.answer);
+
+      // update output node
+      setNodes((nds) =>
+        nds.map((node) =>
+          node.id === "2"
+            ? { ...node, data: { result: res.data.answer } }
+            : node,
+        ),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ✅ Save API
+  const saveData = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/save", {
+        prompt: input,
+        response: result,
+      });
+      alert("Saved!");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <div style={{ height: "100vh", width: "100%" }}>
+      <button onClick={runFlow}>Run Flow</button>
+
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        fitView
+      >
+        <Controls />
+        <MiniMap zoomable pannable />
+      </ReactFlow>
+
+      <button onClick={saveData}>Save</button>
+    </div>
+  );
+}
+
+export default App;
