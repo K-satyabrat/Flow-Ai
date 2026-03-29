@@ -51,7 +51,7 @@ Backend starts at `http://localhost:5000` by default.
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run start
 ```
 
 Vite prints the local dev URL (commonly `http://localhost:5173`).
