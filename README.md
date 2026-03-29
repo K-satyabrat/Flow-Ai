@@ -2,6 +2,11 @@
 
 A small full-stack app that lets you type a prompt in a flow-based UI, run it against an OpenRouter chat completion model, and optionally save the prompt/response to MongoDB.
 
+## Live demo
+
+- Frontend: https://flow-ai-frontend-02o3.onrender.com/
+- Backend: https://flow-ai-backend-qmu8.onrender.com/
+
 ## Tech stack
 
 - Frontend: React + Vite, Tailwind CSS, `@xyflow/react`
@@ -68,6 +73,5 @@ Base URL: `http://localhost:5000`
 - `POST /api/save`
   - Body: `{ "prompt": "…", "response": "…" }`
   - Response: `{ "message": "Saved successfully" }`
-
 
 
