@@ -62,7 +62,7 @@ function App() {
         id: "e1-2",
         source: "1",
         target: "2",
-        type: "straight",
+        type: "smoothstep",
         animated: true,
         style: { stroke: "#6366f1", strokeWidth: 2 },
       },
