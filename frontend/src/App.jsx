@@ -38,12 +38,13 @@ function App() {
           onChange: (id, value) => {
             setInput(value);
 
+         
             setNodes((nds) =>
               nds.map((node) =>
                 node.id === id
                   ? { ...node, data: { ...node.data, input: value } }
-                  : node,
-              ),
+                  : node
+              )
             );
           },
         },
@@ -75,8 +76,10 @@ function App() {
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) =>
-        node.id === "1" ? { ...node, data: { ...node.data, input } } : node,
-      ),
+        node.id === "1"
+          ? { ...node, data: { ...node.data, input } }
+          : node
+      )
     );
   }, [input]);
 
@@ -84,8 +87,10 @@ function App() {
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) =>
-        node.id === "2" ? { ...node, data: { ...node.data, result } } : node,
-      ),
+        node.id === "2"
+          ? { ...node, data: { ...node.data, result } }
+          : node
+      )
     );
   }, [result]);
 
@@ -111,7 +116,9 @@ function App() {
         </div>
 
         {error && (
-          <div className="mt-2 text-red-600 text-sm font-medium">{error}</div>
+          <div className="mt-2 text-red-600 text-sm font-medium">
+            {error}
+          </div>
         )}
       </div>
 

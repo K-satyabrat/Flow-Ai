@@ -9,7 +9,7 @@ export const FlowProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  //  Run Flow
+  // 🔹 Run Flow
   const runFlow = async () => {
     if (!input.trim()) {
       setError("Please enter a prompt.");
@@ -36,7 +36,7 @@ export const FlowProvider = ({ children }) => {
     }
   };
 
-  //  Save Data
+  // 🔹 Save Data
   const saveData = async () => {
     if (!input || !result) {
       setError("Nothing to save.");
