@@ -5,10 +5,10 @@ const askAi = async (req, res) => {
   try {
     const { prompt, model } = req.body;
 
-    console.log("Prompt:", prompt);
+    // console.log("Prompt:", prompt);
 
     const models = model
-      ? [model]
+      ? model
       : ["meta-llama/llama-3-8b-instruct", "openchat/openchat-7b:free"];
 
     let answer = "";
@@ -32,7 +32,7 @@ const askAi = async (req, res) => {
 
         answer = response.data.choices[0].message.content;
 
-        console.log("Used model:", m);
+        // console.log("Used model:", m);
         break;
       } catch (err) {
         console.log(
@@ -47,7 +47,7 @@ const askAi = async (req, res) => {
       answer = "Please try again later.";
     }
 
-    res.json({ answer });
+    res.status(201).json({ answer });
   } catch (error) {
     console.error(error.response?.data || error.message);
     res.status(500).json({ error: "Something went wrong" });
@@ -61,7 +61,7 @@ const savePrompt = async (req, res) => {
     const data = new Prompt({ prompt, response });
     await data.save();
 
-    res.json({ message: "Saved successfully" });
+    res.status(201).json({ message: "Saved successfully" });
   } catch (err) {
     res.status(500).json({ error: "Save failed" });
   }
